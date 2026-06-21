@@ -10,51 +10,77 @@ const error = ref('');
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
 
-const isAdmin = computed(() => auth.isAdmin);
-
 const dashboardTitle = computed(() => {
-  return isAdmin.value ? 'Gallery dashboard' : 'Gallery exhibitions';
+  return auth.isAdmin ? 'Gallery dashboard' : 'Gallery exhibitions';
 });
 
 const dashboardDescription = computed(() => {
-  return isAdmin.value
-    ? 'Quick overview of upcoming and recent exhibitions.'
-    : 'Browse upcoming and recent gallery exhibitions.';
+  return auth.isAdmin
+    ? 'Quick overview of gallery exhibitions and operational status.'
+    : 'Browse gallery exhibitions and see what is currently available.';
 });
 
-const sortedExhibitions = computed(() => {
-  return [...exhibitions.value]
-    .filter((item) => item.startDate)
-    .sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
-});
+const orderedExhibitions = computed(() => {
+  return [...exhibitions.value].sort((a, b) => {
+    const statusOrder = {
+      live: 1,
+      scheduled: 2,
+      closed: 3,
+    };
 
-const upcomingExhibition = computed(() => {
-  const today = new Date();
+    const aStatus = getExhibitionStatus(a).key;
+    const bStatus = getExhibitionStatus(b).key;
 
-  const future = sortedExhibitions.value.filter((item) => {
-    return new Date(item.startDate) >= today;
+    if (statusOrder[aStatus] !== statusOrder[bStatus]) {
+      return statusOrder[aStatus] - statusOrder[bStatus];
+    }
+
+    return new Date(a.startDate || 0) - new Date(b.startDate || 0);
   });
-
-  return future[0] || sortedExhibitions.value[sortedExhibitions.value.length - 1] || null;
 });
 
-const visibleExhibitions = computed(() => {
+function toDate(value) {
+  if (!value) {
+    return null;
+  }
+
+  const date = new Date(value);
+  date.setHours(0, 0, 0, 0);
+
+  return date;
+}
+
+function getToday() {
   const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
-  const future = sortedExhibitions.value.filter((item) => {
-    return new Date(item.startDate) >= today;
-  });
+  return today;
+}
 
-  const past = sortedExhibitions.value
-    .filter((item) => new Date(item.startDate) < today)
-    .sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
+function getExhibitionStatus(exhibition) {
+  const today = getToday();
+  const startDate = toDate(exhibition.startDate);
+  const endDate = toDate(exhibition.endDate);
 
-  const ordered = [...future, ...past];
+  if (startDate && endDate && today >= startDate && today <= endDate) {
+    return {
+      key: 'live',
+      label: 'LIVE',
+    };
+  }
 
-  return ordered
-    .filter((item) => item.id !== upcomingExhibition.value?.id)
-    .slice(0, 4);
-});
+  if (startDate && today < startDate) {
+    return {
+      key: 'scheduled',
+      label: 'SCHEDULED',
+    };
+  }
+
+  return {
+    key: 'closed',
+    label: 'CLOSED',
+  };
+}
 
 function formatDate(value) {
   if (!value) {
@@ -93,7 +119,7 @@ async function loadExhibitions() {
   error.value = '';
 
   try {
-    const response = await fetch(`${apiBaseUrl}/exhibitions?page=0&size=10&sort=startDate,asc`, {
+    const response = await fetch(`${apiBaseUrl}/exhibitions?page=0&size=20&sort=startDate,asc`, {
       credentials: 'include',
     });
 
@@ -124,82 +150,73 @@ onMounted(() => {
     </div>
   </section>
 
-  <section class="events-dashboard single-focus">
-    <article class="event-feature-card">
-      <div class="section-heading">
-        <p class="eyebrow">Upcoming exhibition</p>
-        <h2>Next gallery event</h2>
+  <section class="exhibition-status-board">
+    <div class="status-board-header">
+      <div>
+        <p class="eyebrow">Exhibitions</p>
+        <h2>Gallery schedule</h2>
       </div>
 
-      <div v-if="loading" class="empty compact">
-        Loading exhibition data...
-      </div>
+      <span class="status-board-count">
+        {{ orderedExhibitions.length }} exhibitions
+      </span>
+    </div>
 
-      <div v-else-if="error" class="alert alert-error">
-        {{ error }}
-      </div>
+    <div v-if="loading" class="empty compact">
+      Loading exhibitions...
+    </div>
 
+    <div v-else-if="error" class="alert alert-error">
+      {{ error }}
+    </div>
+
+    <div v-else-if="orderedExhibitions.length" class="exhibition-status-list">
       <RouterLink
-        v-else-if="upcomingExhibition"
-        class="event-row event-row-featured"
-        :to="{ name: 'exhibitions' }"
+        v-for="exhibition in orderedExhibitions"
+        :key="exhibition.id"
+        class="exhibition-status-card"
+        :class="`status-${getExhibitionStatus(exhibition).key}`"
+        :to="{ name: 'exhibition-details', params: { id: exhibition.id } }"
       >
-        <div>
-          <strong>{{ upcomingExhibition.title }}</strong>
-
-          <span>
-            {{ formatDate(upcomingExhibition.startDate) }}
-            —
-            {{ formatDate(upcomingExhibition.endDate) }}
+        <div class="status-card-main">
+          <span
+            class="status-chip"
+            :class="`status-chip-${getExhibitionStatus(exhibition).key}`"
+          >
+            {{ getExhibitionStatus(exhibition).label }}
           </span>
 
-          <small v-if="upcomingExhibition.exhibitorName">
-            {{ upcomingExhibition.exhibitorName }}
-          </small>
+          <h3>{{ exhibition.title }}</h3>
+
+          <p v-if="exhibition.description">
+            {{ exhibition.description }}
+          </p>
+
+          <p v-else class="muted">
+            No description available.
+          </p>
         </div>
-      </RouterLink>
 
-      <div v-else class="empty compact">
-        No exhibitions available yet.
-      </div>
-    </article>
-
-    <article class="events-list-card">
-      <div class="section-heading">
-        <p class="eyebrow">Schedule</p>
-        <h2>Gallery exhibitions</h2>
-      </div>
-
-      <div v-if="loading" class="empty compact">
-        Loading schedule...
-      </div>
-
-      <div v-else-if="visibleExhibitions.length" class="events-list">
-        <RouterLink
-          v-for="exhibition in visibleExhibitions"
-          :key="exhibition.id"
-          class="event-row"
-          :to="{ name: 'exhibitions' }"
-        >
+        <div class="status-card-meta">
           <div>
-            <strong>{{ exhibition.title }}</strong>
-
-            <span>
+            <span>Period</span>
+            <strong>
               {{ formatDate(exhibition.startDate) }}
               —
               {{ formatDate(exhibition.endDate) }}
-            </span>
-
-            <small v-if="exhibition.exhibitorName">
-              {{ exhibition.exhibitorName }}
-            </small>
+            </strong>
           </div>
-        </RouterLink>
-      </div>
 
-      <div v-else class="empty compact">
-        No other exhibitions available.
-      </div>
-    </article>
+          <div>
+            <span>Exhibitor</span>
+            <strong>{{ exhibition.exhibitorName || '—' }}</strong>
+          </div>
+        </div>
+      </RouterLink>
+    </div>
+
+    <div v-else class="empty compact">
+      No exhibitions available yet.
+    </div>
   </section>
 </template>

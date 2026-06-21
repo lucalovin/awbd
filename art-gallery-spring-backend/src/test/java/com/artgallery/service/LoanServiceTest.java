@@ -20,7 +20,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import com.artgallery.model.Loan;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;

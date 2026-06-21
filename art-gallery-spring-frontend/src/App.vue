@@ -50,7 +50,6 @@ async function onLogout() {
       <div class="user-menu">
         <button class="user-trigger" type="button" @click="toggleUserMenu">
           <span class="user-name">{{ auth.username }}</span>
-          <span class="user-chevron" :class="{ open: userMenuOpen }">⌄</span>
         </button>
 
         <div v-if="userMenuOpen" class="user-dropdown compact">
