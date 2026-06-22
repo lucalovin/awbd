@@ -1,13 +1,10 @@
 # Art Gallery Management System
 
-Aplicație web pentru administrarea unei galerii de artă, realizată pentru proiectul de la disciplina **Aplicații Web cu Arhitectură de Microservicii**.
-
-Proiectul implementează cerințele din **Partea I - Cerințe obligatorii**, folosind o arhitectură full-stack cu backend Spring Boot, frontend Vue 3, autentificare pe bază de roluri și bază de date PostgreSQL.
-
+Aplicație web pentru administrarea unei galerii de artă.
+Proiectul are o arhitectură full-stack cu backend Spring Boot, frontend Vue 3, autentificare pe bază de roluri și bază de date PostgreSQL.
 Aplicația este disponibilă online prin Vercel, Render și Neon PostgreSQL.
 
 ---
-
 ## Cuprins
 
 - [Linkuri proiect](#linkuri-proiect)
@@ -34,7 +31,7 @@ Aplicația este disponibilă online prin Vercel, Render și Neon PostgreSQL.
 
 | Resursă | Link |
 |---|---|
-| Frontend online - Vercel | [https://awbd-deploy-hd22iz59o-catalinmarza29-2853s-projects.vercel.app](https://awbd-deploy-hd22iz59o-catalinmarza29-2853s-projects.vercel.app) |
+| Frontend online - Vercel | [https://awbd-deploy-hd22iz59o-catalinmarza29-2853s-projects.vercel.app] |
 | Backend online - Render | [https://art-gallery-backend-agdm.onrender.com](https://art-gallery-backend-agdm.onrender.com) |
 | API online | [https://art-gallery-backend-agdm.onrender.com/api](https://art-gallery-backend-agdm.onrender.com/api) |
 | Repository echipă | [https://github.com/lucalovin/awbd](https://github.com/lucalovin/awbd) |
@@ -49,20 +46,13 @@ Aplicația este disponibilă online prin Vercel, Render și Neon PostgreSQL.
 **Art Gallery Management System** este o aplicație pentru gestionarea activităților unei galerii de artă.
 
 Aplicația permite administrarea următoarelor elemente:
-
 - artiști;
 - lucrări de artă;
-- colecții;
 - locații;
 - expoziții;
 - expozanți;
 - vizitatori;
 - review-uri;
-- împrumuturi;
-- restaurări;
-- achiziții;
-- angajați;
-- polițe de asigurare.
 
 Aplicația are două tipuri principale de utilizatori:
 
@@ -71,14 +61,13 @@ Aplicația are două tipuri principale de utilizatori:
 
 ---
 
-## Cerințe implementate - PCT I
+## Cerințe implementate
 
 ### 1. Model de date
 
 Aplicația conține mai mult de 6 entități interconectate.
 
 Entități principale:
-
 - Artist;
 - Artwork;
 - Collection;
@@ -95,7 +84,6 @@ Entități principale:
 - InsurancePolicy.
 
 Tipuri de relații implementate:
-
 | Tip relație | Exemplu |
 |---|---|
 | `@OneToOne` | Artwork - Insurance / InsurancePolicy |
@@ -107,13 +95,9 @@ Tipuri de relații implementate:
 | `@ManyToMany` | Artwork - Exhibition |
 
 ---
-
 ### 2. Operații CRUD complete
-
 Aplicația implementează operații CRUD pentru entitățile principale.
-
 Funcționalități:
-
 - creare înregistrări;
 - afișare înregistrări;
 - actualizare înregistrări;
@@ -123,7 +107,6 @@ Funcționalități:
 - sortare.
 
 Backend-ul este structurat pe layere:
-
 - Controller;
 - Service;
 - Repository;
@@ -134,15 +117,12 @@ Backend-ul este structurat pe layere:
 ---
 
 ### 3. Configurare multi-environment
-
 Aplicația folosește profiluri Spring separate:
-
 - `dev` - pentru dezvoltare locală cu PostgreSQL în Docker;
 - `test` - pentru rularea testelor automate;
 - `prod` - pentru deployment online pe Render cu bază de date Neon PostgreSQL.
 
 Fișiere relevante:
-
 ```text
 art-gallery-spring-backend/src/main/resources/application-dev.yml
 art-gallery-spring-backend/src/test/resources/application-test.yml
@@ -150,13 +130,9 @@ art-gallery-spring-backend/src/main/resources/application-prod.yml
 ```
 
 ---
-
 ### 4. Testing
-
 Backend-ul include teste automate pentru layer-ul de service și funcționalitățile principale.
-
 Tehnologii folosite:
-
 - JUnit 5;
 - Mockito;
 - Spring Boot Test;
@@ -173,11 +149,8 @@ BUILD SUCCESS
 ```
 
 ---
-
 ### 5. Views și validare
-
 Frontend-ul este implementat în Vue 3 și oferă interfață pentru:
-
 - autentificare;
 - dashboard;
 - listare entități;
@@ -190,21 +163,15 @@ Frontend-ul este implementat în Vue 3 și oferă interfață pentru:
 Validarea este realizată atât în backend, prin validări pe entități și DTO-uri, cât și în frontend, prin verificarea datelor introduse în formulare.
 
 ---
-
 ### 6. Logging
-
 Backend-ul folosește mecanismul de logging din Spring Boot, bazat pe SLF4J și Logback.
-
 Logging-ul este utilizat pentru urmărirea operațiilor importante și pentru diagnosticarea erorilor.
 
 ---
 
 ### 7. Paginare și sortare
-
 Paginarea și sortarea sunt disponibile pentru mai multe entități.
-
 Exemple:
-
 - Artworks;
 - Artists;
 - Exhibitions;
@@ -212,7 +179,6 @@ Exemple:
 - Reviews.
 
 Frontend-ul include:
-
 - controale de paginare;
 - sortare pe coloane;
 - câmpuri de căutare;
@@ -223,9 +189,7 @@ Frontend-ul include:
 ### 8. Spring Security
 
 Aplicația include autentificare și autorizare cu Spring Security.
-
 Funcționalități implementate:
-
 - autentificare JDBC;
 - utilizatori salvați în tabela `users`;
 - roluri salvate în tabela `authorities`;
@@ -276,7 +240,6 @@ Funcționalități implementate:
 ## Arhitectură aplicație
 
 Aplicația este structurată ca o aplicație full-stack.
-
 ```text
 Vue 3 Frontend - Vercel
         |
@@ -317,7 +280,6 @@ CSS
 ## Deployment
 
 Aplicația este deployată online folosind:
-
 - **Vercel** pentru frontend-ul Vue 3;
 - **Render** pentru backend-ul Spring Boot;
 - **Neon PostgreSQL** pentru baza de date online.
@@ -325,7 +287,6 @@ Aplicația este deployată online folosind:
 ### Frontend - Vercel
 
 Configurare Vercel:
-
 ```text
 Framework Preset: Vite
 Root Directory: art-gallery-spring-frontend
@@ -335,17 +296,13 @@ Install Command: npm install
 ```
 
 Variabilă de mediu Vercel:
-
 ```text
 VITE_API_BASE_URL=https://art-gallery-backend-agdm.onrender.com/api
 ```
-
 Pentru a evita eroarea `404 Not Found` la refresh pe rutele Vue, aplicația folosește fișierul:
-
 ```text
 art-gallery-spring-frontend/vercel.json
 ```
-
 cu regula de rewrite către `index.html`.
 
 ---
@@ -353,7 +310,6 @@ cu regula de rewrite către `index.html`.
 ### Backend - Render
 
 Configurare Render:
-
 ```text
 Runtime: Docker
 Root Directory: art-gallery-spring-backend
@@ -362,7 +318,6 @@ Branch: main
 ```
 
 Variabile de mediu Render:
-
 ```text
 SPRING_PROFILES_ACTIVE=prod
 SPRING_DATASOURCE_URL=jdbc:postgresql://<NEON_HOST>/<DATABASE>?sslmode=require
@@ -372,7 +327,6 @@ APP_CORS_ALLOWED_ORIGINS=http://localhost:5173,https://*.vercel.app
 ```
 
 Valorile sensibile nu sunt publicate în repository.
-
 Backend-ul expune API-ul la:
 
 ```text
@@ -384,11 +338,8 @@ https://art-gallery-backend-agdm.onrender.com/api
 ### Baza de date - Neon PostgreSQL
 
 Baza de date online este găzduită pe Neon PostgreSQL.
-
 Schema este generată de Hibernate/JPA la pornirea aplicației cu profilul `prod`.
-
 Tabele principale în producție:
-
 - `artist`;
 - `artwork`;
 - `artwork_exhibition`;
@@ -411,9 +362,7 @@ Tabele principale în producție:
 ## Model de date
 
 Modelul de date este construit în jurul domeniului unei galerii de artă.
-
 Descriere entități:
-
 - `Artist` - reține informații despre artiști;
 - `Artwork` - reține informații despre lucrările de artă;
 - `Collection` - reține colecții tematice de lucrări;
@@ -467,7 +416,6 @@ erDiagram
 ### Dezvoltare locală
 
 Aplicația folosește PostgreSQL local, pornit prin Docker Compose.
-
 Configurare locală:
 
 ```text
@@ -480,15 +428,13 @@ Host: localhost
 ```
 
 Pornire bază de date locală:
-
 ```bash
 cd art-gallery-spring-backend
 docker compose up -d
 ```
 
 Verificare container:
-
-```bash
+``bash
 docker ps
 ```
 
@@ -497,7 +443,6 @@ docker ps
 ### Producție online
 
 În producție, baza de date este Neon PostgreSQL.
-
 Aplicația Render se conectează la Neon prin variabile de mediu:
 
 ```text
@@ -513,14 +458,12 @@ Datele demo au fost introduse în Neon pentru prezentarea aplicației online.
 ## Securitate
 
 Aplicația are două roluri principale:
-
 | Rol | Permisiuni |
 |---|---|
 | ADMIN | Poate crea, edita, șterge și vizualiza date |
 | USER | Poate vizualiza date, fără operații administrative |
 
 Funcționalități de securitate:
-
 - login custom;
 - logout;
 - autentificare JDBC;
@@ -531,7 +474,6 @@ Funcționalități de securitate:
 - CORS configurat pentru frontend-ul Vercel.
 
 Conturi demo online:
-
 | Rol | Username | Password |
 |---|---|---|
 | ADMIN | `admin` | `AdminGallery2026!` |
@@ -540,13 +482,10 @@ Conturi demo online:
 ---
 
 ## Documentație API
-
 URL backend online:
-
 ```text
 https://art-gallery-backend-agdm.onrender.com
 ```
-
 URL API online:
 
 ```text
@@ -678,7 +617,6 @@ docker compose up -d
 cd art-gallery-spring-backend
 mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
-
 Backend-ul local rulează la:
 
 ```text
@@ -696,7 +634,6 @@ cd art-gallery-spring-frontend
 npm install
 npm run dev
 ```
-
 Frontend-ul local rulează la:
 
 ```text
@@ -708,14 +645,12 @@ http://localhost:5173
 ## Testare backend
 
 Pentru rularea testelor backend:
-
 ```bash
 cd art-gallery-spring-backend
 mvn test
 ```
 
 Rezultat documentat:
-
 ```text
 Tests run: 123
 Failures: 0
@@ -731,7 +666,6 @@ Testele generează și raport JaCoCo.
 ## Build frontend
 
 Pentru verificarea build-ului frontend:
-
 ```bash
 cd art-gallery-spring-frontend
 npm run build
@@ -743,73 +677,73 @@ npm run build
 
 ### Login
 
-![Login](docs/screenshots/login.png)
+![Login](screenshots/login.png)
 
 ---
 
 ### Dashboard
 
-![Dashboard](docs/screenshots/dashboard.png)
+![Dashboard](screenshots/dashboard.png)
 
 ---
 
 ### Artiști
 
-![Artiști](docs/screenshots/artists.png)
+![Artiști](screenshots/artists.png)
 
 ---
 
 ### Lucrări de artă
 
-![Lucrări de artă](docs/screenshots/artworks.png)
+![Lucrări de artă](screenshots/artworks.png)
 
 ---
 
 ### Expoziții
 
-![Expoziții](docs/screenshots/exhibitions.png)
+![Expoziții](screenshots/exhibitions.png)
 
 ---
 
 ### Detalii expoziție
 
-![Detalii expoziție](docs/screenshots/exhibition-details.png)
+![Detalii expoziție](screenshots/exhibition-details.png)
 
 ---
 
 ### Formular expoziție
 
-![Formular expoziție](docs/screenshots/exhibition-form.png)
+![Formular expoziție](screenshots/exhibition-form.png)
 
 ---
 
 ### Vizitatori
 
-![Vizitatori](docs/screenshots/visitors.png)
+![Vizitatori](screenshots/visitors.png)
 
 ---
 
 ### Review-uri
 
-![Review-uri](docs/screenshots/reviews.png)
+![Review-uri](screenshots/reviews.png)
 
 ---
 
 ### Container Docker pentru baza de date locală
 
-![Container Docker pentru baza de date](docs/screenshots/docker-database.png)
+![Container Docker pentru baza de date](screenshots/docker-database.png)
 
 ---
 
 ### Tabelele bazei de date în pgAdmin
 
-![Tabele bază de date](docs/screenshots/database-table.png)
+![Tabele bază de date](screenshots/database-table.png)
 
 ---
 
 ### Teste backend
 
-![Teste backend](docs/screenshots/backend-tests.png)
+![Teste backend](screenshots/backend-tests.png)
 
 ---
 
@@ -892,9 +826,4 @@ git push
 ---
 
 ## Observații
-
-Acest proiect se concentrează pe implementarea cerințelor obligatorii din PCT I.
-
-Cerințele opționale de microservicii nu reprezintă scopul principal al acestei etape.
-
 Deployment-ul online este disponibil prin Vercel, Render și Neon PostgreSQL.
