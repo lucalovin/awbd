@@ -203,6 +203,84 @@ Funcționalități implementate:
 
 ---
 
+### 12. AI Agents - Dezvoltare
+
+Pe parcursul dezvoltării aplicației a fost folosit **GitHub Copilot în mod Agent**, cu modelul **Claude Opus 4.8**, ca asistent de programare integrat în VS Code.
+Spre deosebire de modul clasic de completare a codului, modul Agent permite asistentului să analizeze întregul workspace, să citească și să modifice mai multe fișiere, să ruleze comenzi în terminal și să valideze rezultatele într-un flux iterativ, sub supravegherea dezvoltatorului.
+
+Modelul a fost utilizat pentru cele trei direcții principale enumerate mai jos, precum și pentru migrarea aplicației de la stack-ul inițial **.NET + Oracle** la **Spring Boot + PostgreSQL**.
+
+#### GitHub Copilot pentru pair programming
+
+GitHub Copilot a fost folosit ca partener de programare (pair programming) pe tot parcursul implementării.
+
+Mod de utilizare:
+- generarea scheletului de cod pentru layere-le aplicației (Controller, Service, Repository, DTO);
+- implementarea operațiilor CRUD și a metodelor de căutare, paginare și sortare;
+- sugerarea adnotărilor JPA pentru relațiile dintre entități (`@OneToOne`, `@OneToMany`, `@ManyToOne`, `@ManyToMany`);
+- asistență la configurarea Spring Security (autentificare JDBC, BCrypt, roluri);
+- generarea componentelor și view-urilor Vue 3, împreună cu apelurile către API.
+
+Beneficii:
+- reducerea timpului de scriere a codului repetitiv (boilerplate);
+- menținerea unui stil de cod consistent între layere și module;
+- propunerea rapidă de soluții pentru probleme de integrare frontend-backend;
+- păstrarea controlului de către dezvoltator, care validează și ajustează fiecare sugestie.
+
+#### Code review automatizat
+
+Modelul Claude Opus 4.8 a fost folosit pentru a analiza codul existent și a oferi un review automat înainte de finalizarea modificărilor.
+
+Mod de utilizare:
+- analiza claselor din service și controller pentru identificarea problemelor de logică;
+- semnalarea posibilelor vulnerabilități de securitate și a practicilor nerecomandate;
+- verificarea tratării corecte a excepțiilor și a validărilor pe DTO-uri și entități;
+- sugestii de refactorizare și de îmbunătățire a lizibilității codului;
+- verificarea coerenței între backend și frontend la nivelul contractelor API.
+
+Beneficii:
+- detectarea timpurie a erorilor și a cazurilor neacoperite;
+- creșterea calității și a mentenabilității codului;
+- feedback rapid, fără a aștepta un review manual complet;
+- recomandări aliniate la bunele practici Spring Boot și Vue 3.
+
+#### Documentație generată automat
+
+GitHub Copilot a fost folosit pentru generarea și actualizarea documentației proiectului.
+
+Mod de utilizare:
+- generarea și structurarea fișierului `README.md` (descriere, arhitectură, deployment, model de date);
+- crearea tabelelor pentru documentația API (endpoint-uri, metode, descrieri);
+- generarea diagramei ER în format Mermaid pe baza modelului de entități;
+- documentarea pașilor de rulare locală și de configurare a mediilor `dev`, `test` și `prod`;
+- explicarea fragmentelor de cod și a configurațiilor mai complexe.
+
+Beneficii:
+- documentație clară, completă și ținută la zi cu starea proiectului;
+- economisirea timpului necesar redactării manuale a documentației;
+- format consistent și ușor de citit (tabele, liste, blocuri de cod);
+- reducerea diferențelor dintre cod și documentația aferentă.
+
+#### Migrarea de la .NET + Oracle la Spring + PostgreSQL
+
+GitHub Copilot a fost folosit pentru migrarea aplicației de la stack-ul tehnologic inițial (**.NET + Oracle**) la stack-ul actual (**Spring Boot + PostgreSQL**), păstrând același domeniu funcțional al galeriei de artă.
+
+Mod de utilizare:
+- translatarea logicii de business din **C# / .NET** (arhitectură Clean: API, Application, Domain, Infrastructure) în **Java / Spring Boot** (arhitectură pe layere: Controller, Service, Repository);
+- conversia modelului de date din **Oracle** (tabele OLTP, PL/SQL) în entități **JPA** mapate pe **PostgreSQL**;
+- adaptarea interogărilor SQL specifice Oracle la sintaxa PostgreSQL (tipuri de date, secvențe, funcții);
+- maparea controllerelor și a serviciilor .NET către echivalentele Spring REST;
+- identificarea și rezolvarea diferențelor dintre cele două SGBD-uri în timpul migrării.
+
+Beneficii:
+- accelerarea procesului de migrare între două stack-uri tehnologice diferite;
+- reducerea erorilor la translatarea logicii de business dintr-un limbaj în altul;
+- păstrarea consistenței domeniului între implementarea veche și cea nouă;
+- evidențierea rapidă a diferențelor dintre Oracle și PostgreSQL (sintaxă, tipuri, secvențe).
+
+
+---
+
 ## Tehnologii folosite
 
 ### Backend
