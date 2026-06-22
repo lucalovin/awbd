@@ -74,7 +74,7 @@ defineExpose({ reload: load });
           >
             {{ col.label }}<span>{{ arrow(col) }}</span>
           </th>
-          <th v-if="$slots.actions" style="text-align: right">Actions</th>
+          <th v-if="$slots.actions" class="actions-header" aria-label="Actions"></th>
         </tr>
       </thead>
       <tbody>
