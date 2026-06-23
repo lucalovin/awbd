@@ -38,6 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -51,6 +52,9 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class DevDataSeeder implements CommandLineRunner {
+
+    /** Target row count for the entities used to demo pagination (default page size is 10). */
+    private static final int PAGINATION_DEMO_TARGET = 25;
 
     private final ArtistRepository artistRepository;
     private final CollectionRepository collectionRepository;
@@ -70,8 +74,14 @@ public class DevDataSeeder implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) {
+        seedCuratedDataIfEmpty();
+        ensurePaginationDemoData();
+    }
+
+    /** Seeds the curated, interlinked demo dataset, but only when the database is empty. */
+    private void seedCuratedDataIfEmpty() {
         if (artistRepository.count() > 0) {
-            log.debug("Domain data already present; skipping demo seed");
+            log.debug("Domain data already present; skipping curated demo seed");
             return;
         }
         log.info("Seeding demo domain data (dev profile)");
@@ -170,6 +180,92 @@ public class DevDataSeeder implements CommandLineRunner {
                 Acquisition.builder().artwork(starryNight).acquisitionDate(LocalDate.of(2018, 6, 5)).acquisitionType("Purchase").price(BigDecimal.valueOf(900_000)).staff(staff.get(2)).build()));
 
         log.info("Demo seed complete: {} artworks, {} exhibitions", artworks.size(), exhibitions.size());
+    }
+
+    /**
+     * Idempotently tops up a few entities with extra rows so that UI/API pagination
+     * (default page size 10) can be demonstrated. This runs on every dev startup but
+     * only inserts the rows still missing to reach {@link #PAGINATION_DEMO_TARGET}, so
+     * it is safe to run repeatedly against the persistent dev database.
+     */
+    private void ensurePaginationDemoData() {
+        topUpArtists();
+        topUpVisitors();
+        topUpArtworks();
+    }
+
+    private void topUpArtists() {
+        long existing = artistRepository.count();
+        if (existing >= PAGINATION_DEMO_TARGET) {
+            return;
+        }
+        String[] nationalities = {"American", "British", "Italian", "German", "Japanese", "Mexican", "Romanian"};
+        List<Artist> extra = new ArrayList<>();
+        for (long i = existing + 1; i <= PAGINATION_DEMO_TARGET; i++) {
+            int birthYear = 1860 + (int) (i % 80);
+            extra.add(Artist.builder()
+                    .name(String.format("Demo Artist %02d", i))
+                    .nationality(nationalities[(int) (i % nationalities.length)])
+                    .birthYear(birthYear)
+                    .deathYear(birthYear + 70)
+                    .build());
+        }
+        artistRepository.saveAll(extra);
+        log.info("Pagination demo: added {} artist(s) to reach {}", extra.size(), PAGINATION_DEMO_TARGET);
+    }
+
+    private void topUpVisitors() {
+        long existing = visitorRepository.count();
+        if (existing >= PAGINATION_DEMO_TARGET) {
+            return;
+        }
+        String[] memberships = {"Standard", "VIP", "Student", "Senior"};
+        List<Visitor> extra = new ArrayList<>();
+        for (long i = existing + 1; i <= PAGINATION_DEMO_TARGET; i++) {
+            extra.add(Visitor.builder()
+                    .name(String.format("Demo Visitor %02d", i))
+                    .email(String.format("demo.visitor%02d@example.com", i))
+                    .phone(String.format("+40720%06d", i))
+                    .membershipType(memberships[(int) (i % memberships.length)])
+                    .joinDate(LocalDate.of(2024, 1, 1).plusDays(i))
+                    .build());
+        }
+        visitorRepository.saveAll(extra);
+        log.info("Pagination demo: added {} visitor(s) to reach {}", extra.size(), PAGINATION_DEMO_TARGET);
+    }
+
+    private void topUpArtworks() {
+        long existing = artworkRepository.count();
+        if (existing >= PAGINATION_DEMO_TARGET) {
+            return;
+        }
+        List<Artist> artists = artistRepository.findAll();
+        if (artists.isEmpty()) {
+            return; // an artwork requires a (non-null) artist
+        }
+        List<Collection> collections = collectionRepository.findAll();
+        List<Location> locations = locationRepository.findAll();
+        String[] mediums = {"Oil on Canvas", "Watercolor", "Acrylic", "Bronze", "Marble"};
+        List<Artwork> extra = new ArrayList<>();
+        for (long i = existing + 1; i <= PAGINATION_DEMO_TARGET; i++) {
+            int idx = (int) i;
+            Artwork artwork = Artwork.builder()
+                    .title(String.format("Demo Artwork %02d", i))
+                    .artist(artists.get(idx % artists.size()))
+                    .yearCreated(1900 + (idx % 120))
+                    .medium(mediums[idx % mediums.length])
+                    .estimatedValue(BigDecimal.valueOf(100_000L + i * 5_000L))
+                    .build();
+            if (!collections.isEmpty()) {
+                artwork.setCollection(collections.get(idx % collections.size()));
+            }
+            if (!locations.isEmpty()) {
+                artwork.setLocation(locations.get(idx % locations.size()));
+            }
+            extra.add(artwork);
+        }
+        artworkRepository.saveAll(extra);
+        log.info("Pagination demo: added {} artwork(s) to reach {}", extra.size(), PAGINATION_DEMO_TARGET);
     }
 
     private Artwork artwork(String title, Artist artist, int year, Collection collection,
