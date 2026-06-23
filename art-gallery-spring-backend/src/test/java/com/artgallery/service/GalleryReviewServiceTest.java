@@ -35,7 +35,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("GalleryReviewService (artwork and/or exhibition rule)")
+@DisplayName("GalleryReviewService (visitor + exhibition + artwork rule)")
 class GalleryReviewServiceTest {
 
     @Mock
@@ -61,49 +61,58 @@ class GalleryReviewServiceTest {
     }
 
     @Test
-    @DisplayName("create() succeeds when an artwork is referenced")
-    void createWithArtwork() {
+    @DisplayName("create() succeeds when visitor, exhibition and artwork are valid")
+    void createSucceeds() {
         stubVisitor();
+        when(exhibitionRepository.findById(3L))
+                .thenReturn(Optional.of(Exhibition.builder().id(3L).title("Expo").build()));
         when(artworkRepository.findById(2L))
                 .thenReturn(Optional.of(Artwork.builder().id(2L).title("X").build()));
+        when(exhibitionRepository.existsArtworkInExhibition(3L, 2L)).thenReturn(true);
         when(reviewRepository.save(any(GalleryReview.class))).thenAnswer(inv -> {
             GalleryReview r = inv.getArgument(0);
             r.setId(7L);
             return r;
         });
         GalleryReviewRequest request = new GalleryReviewRequest(
-                1L, 2L, null, 5, "Wonderful", LocalDate.of(2024, 3, 1));
+                1L, 2L, 3L, 5, "Wonderful", LocalDate.of(2024, 3, 1));
 
         var response = service.create(request);
 
         assertThat(response.id()).isEqualTo(7L);
         assertThat(response.artworkId()).isEqualTo(2L);
-    }
-
-    @Test
-    @DisplayName("create() succeeds when only an exhibition is referenced")
-    void createWithExhibition() {
-        stubVisitor();
-        when(exhibitionRepository.findById(3L))
-                .thenReturn(Optional.of(Exhibition.builder().id(3L).title("Expo").build()));
-        when(reviewRepository.save(any(GalleryReview.class))).thenAnswer(inv -> inv.getArgument(0));
-        GalleryReviewRequest request = new GalleryReviewRequest(
-                1L, null, 3L, 4, null, LocalDate.of(2024, 3, 1));
-
-        var response = service.create(request);
-
         assertThat(response.exhibitionId()).isEqualTo(3L);
     }
 
     @Test
-    @DisplayName("create() rejects a review with neither artwork nor exhibition")
-    void createWithoutTargetThrows() {
+    @DisplayName("create() fails when the exhibition does not exist")
+    void createMissingExhibition() {
+        stubVisitor();
+        when(exhibitionRepository.findById(3L)).thenReturn(Optional.empty());
         GalleryReviewRequest request = new GalleryReviewRequest(
-                1L, null, null, 5, "Orphan", LocalDate.of(2024, 3, 1));
+                1L, 2L, 3L, 4, null, LocalDate.of(2024, 3, 1));
+
+        assertThatThrownBy(() -> service.create(request))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessageContaining("Exhibition");
+        verify(reviewRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("create() rejects an artwork that is not assigned to the exhibition")
+    void createRejectsArtworkNotInExhibition() {
+        stubVisitor();
+        when(exhibitionRepository.findById(3L))
+                .thenReturn(Optional.of(Exhibition.builder().id(3L).title("Expo").build()));
+        when(artworkRepository.findById(2L))
+                .thenReturn(Optional.of(Artwork.builder().id(2L).title("X").build()));
+        when(exhibitionRepository.existsArtworkInExhibition(3L, 2L)).thenReturn(false);
+        GalleryReviewRequest request = new GalleryReviewRequest(
+                1L, 2L, 3L, 5, "Orphan", LocalDate.of(2024, 3, 1));
 
         assertThatThrownBy(() -> service.create(request))
                 .isInstanceOf(BadRequestException.class)
-                .hasMessageContaining("artwork and/or an exhibition");
+                .hasMessageContaining("not assigned to the selected exhibition");
         verify(reviewRepository, never()).save(any());
     }
 
@@ -158,9 +167,11 @@ class GalleryReviewServiceTest {
     void update() {
         when(reviewRepository.findById(5L)).thenReturn(Optional.of(sampleReview(5)));
         when(visitorRepository.findById(1L)).thenReturn(Optional.of(Visitor.builder().id(1L).name("Ana").build()));
+        when(exhibitionRepository.findById(3L)).thenReturn(Optional.of(Exhibition.builder().id(3L).title("Expo").build()));
         when(artworkRepository.findById(2L)).thenReturn(Optional.of(Artwork.builder().id(2L).title("X").build()));
+        when(exhibitionRepository.existsArtworkInExhibition(3L, 2L)).thenReturn(true);
         when(reviewRepository.save(any(GalleryReview.class))).thenAnswer(inv -> inv.getArgument(0));
-        service.update(5L, new GalleryReviewRequest(1L, 2L, null, 4, "good", LocalDate.of(2024, 3, 2)));
+        service.update(5L, new GalleryReviewRequest(1L, 2L, 3L, 4, "good", LocalDate.of(2024, 3, 2)));
         verify(reviewRepository).save(any(GalleryReview.class));
     }
 
