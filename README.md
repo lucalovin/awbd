@@ -125,7 +125,7 @@ Aplicația folosește profiluri Spring separate:
 Fișiere relevante:
 ```text
 art-gallery-spring-backend/src/main/resources/application-dev.yml
-art-gallery-spring-backend/src/test/resources/application-test.yml
+art-gallery-spring-backend/src/main/resources/application-test.yml
 art-gallery-spring-backend/src/main/resources/application-prod.yml
 ```
 
