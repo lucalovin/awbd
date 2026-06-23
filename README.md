@@ -86,12 +86,13 @@ Entități principale:
 Tipuri de relații implementate:
 | Tip relație | Exemplu |
 |---|---|
-| `@OneToOne` | Artwork - Insurance / InsurancePolicy |
+| `@OneToOne` | Artwork - Acquisition |
 | `@OneToMany / @ManyToOne` | Artist - Artwork |
 | `@OneToMany / @ManyToOne` | Collection - Artwork |
 | `@OneToMany / @ManyToOne` | Location - Artwork |
 | `@OneToMany / @ManyToOne` | Visitor - GalleryReview |
 | `@OneToMany / @ManyToOne` | Staff - Restoration |
+| `@OneToMany / @ManyToOne` | InsurancePolicy - Insurance |
 | `@ManyToMany` | Artwork - Exhibition |
 
 ---
@@ -512,7 +513,7 @@ docker compose up -d
 ```
 
 Verificare container:
-``bash
+```bash
 docker ps
 ```
 
@@ -550,6 +551,12 @@ Funcționalități de securitate:
 - acces diferențiat pe roluri;
 - ascunderea acțiunilor administrative în frontend pentru utilizatorii non-admin;
 - CORS configurat pentru frontend-ul Vercel.
+
+> **Notă privind CSRF:** protecția CSRF este dezactivată intenționat, deoarece
+> backend-ul este un REST API stateless consumat de SPA-ul Vue de pe alt origin.
+> Protecția se bazează pe cookie-ul de sesiune `HttpOnly` cu `SameSite=Lax` și pe
+> CORS restricționat la origin-urile cunoscute ale frontend-ului (cu credentials),
+> nu pe formulare server-side care ar necesita token CSRF.
 
 Conturi demo online:
 | Rol | Username | Password |
