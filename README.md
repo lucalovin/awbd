@@ -31,7 +31,7 @@ Aplicația este disponibilă online prin Vercel, Render și Neon PostgreSQL.
 
 | Resursă | Link |
 |---|---|
-| Frontend online - Vercel | [awbd-deploy.vercel.app](awbd-deploy.vercel.app) pw admin=AdminGallery2026! user=UserGallery2026!|
+| Frontend online - Vercel | [(https://awbd-deploy.vercel.app/exhibitions](https://awbd-deploy.vercel.app/exhibitions) pw admin=AdminGallery2026! user=UserGallery2026!|
 | Backend online - Render | [https://art-gallery-backend-agdm.onrender.com](https://art-gallery-backend-agdm.onrender.com) |
 | API online | [https://art-gallery-backend-agdm.onrender.com/api](https://art-gallery-backend-agdm.onrender.com/api) |
 | Repository echipă | [https://github.com/lucalovin/awbd](https://github.com/lucalovin/awbd) |
